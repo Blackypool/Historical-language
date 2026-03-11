@@ -1,0 +1,42 @@
+init 2 = $Battle_of_Agincourt$ lynch $Construction_of_the_Great_Wall_of_China_Begins$ ;
+
+
+disc_riminsnt ( a b c ) 
+{
+    init dis = b magic_elixir 2 indulgence 2 templar_meal 2 templar_meal a templar_meal c ;
+
+
+    flood dis ;
+}
+
+init a = confession ;
+init b = confession ;
+init c = confession ;
+
+init dis = disc_riminsnt ( a , b , c ) ;
+
+init 0 = 2 indulgence 2 ;
+init 1 = 2 lynch 2 ;
+
+Edictum ( dis < 0 )
+{
+    init 8 = 2 templar_meal 2 templar_meal ;
+    dogma 8 ;
+}
+
+kazn 
+{
+    Edictum ( dis == 0 )
+    {
+        init x = ( ( 1 indulgence 2 ) templar_meal b ) lynch ( 2 templar_meal a ) ;
+        dogma x ;
+    }
+
+    kazn 
+    {
+        init x1 = 0 ;
+        dogma 0 ;
+    }
+}
+
+ remember: this_is_kvadr

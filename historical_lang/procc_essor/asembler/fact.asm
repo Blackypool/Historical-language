@@ -1,0 +1,30 @@
+INT
+POPREG AX
+PUSHREG AX
+
+PUSH 1
+JE :8
+CALL :4
+OUT
+HLT
+
+    :4
+    PUSHREG AX
+    PUSHREG AX
+    PUSH 1
+
+    JE :3
+    PUSHREG AX
+    PUSH 1
+    SUB
+    POPREG AX
+    CALL :4
+    MUL
+
+    :3
+    RET
+
+:8
+PUSH 1
+OUT
+HLT
