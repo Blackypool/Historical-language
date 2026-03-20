@@ -1,4 +1,4 @@
-#include "enumchik_s.h"
+#include "../enumchik_s.h"
 #include "type_of_opera.h"
 
 void nahui_is_compilatora(int *hranilische, size_t number_of);

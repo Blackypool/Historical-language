@@ -1,7 +1,7 @@
 #ifndef SWITCH
 #define SWITCH
 
-#include "enumchik_s.h"
+#include "../enumchik_s.h"
 
 #define ST_PP_CALC(data, uslovie)\
         int v_1 = stack_pop(data);\

@@ -699,7 +699,15 @@ Le_af Get_solo_string(ar_get)
             (ast->pose)++;
          }
 
-    else 
+    else if(CUR_ent.type == OPERAT && CUR_OPER == SQRT_C)
+         {
+            leaf = &CUR_ent;
+            (ast->pose)++;
+
+            leaf->left = Get_solo_string(ast);
+         }
+         
+    else
         leaf = Get_logical_OR(ast);
 
 

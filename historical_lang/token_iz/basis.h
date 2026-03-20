@@ -12,11 +12,6 @@ struct numb_base
     int vsrtrechali_li;
 };
 
-#define BASA_HISTORY "history.rim"  //база событий с данными
-#define STYLE_FILE   "style.rim"    //перезаписываем оригинал в нужном стиле
-#define MY_language  "test.rim"     //откуда читаем
-
-
 extern struct numb_base* date_hist;
 extern int num_of_date;
 

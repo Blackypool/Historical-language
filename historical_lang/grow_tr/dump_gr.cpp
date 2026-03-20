@@ -3,7 +3,7 @@
 void picture_of_root(struct leaf *root, int *number_of_zapusk, const char* text)
 {
     char str[256] = {};
-    snprintf(str, sizeof(str), "Diff_dump_%d.dot", *number_of_zapusk);
+    snprintf(str, sizeof(str), "dump_graph/Diff_dump_%d.dot", *number_of_zapusk);
 
     FILE *fp_out = fopen(str, "w");
     AsserT(fp_out == NULL, );
@@ -12,7 +12,6 @@ void picture_of_root(struct leaf *root, int *number_of_zapusk, const char* text)
 
     fprintf(fp_out, "  labelloc=\"t\";\n");
     fprintf(fp_out, "  label=\"ROOT: %p\nNUM_ZAP: %d\n%s\";\n", root, *number_of_zapusk, text);
-
 
 
     draw_clear_leaf(fp_out, root);
@@ -122,7 +121,7 @@ void call_terminal(int number_of_zapusk)
 {
     char apple_script[512] = {};
 
-    snprintf(apple_script, sizeof(apple_script), "cd ~/Desktop/historical_lang && dot -Tpng Diff_dump_%d.dot -o try_try_%d.png && \
+    snprintf(apple_script, sizeof(apple_script), "cd ~/Desktop/historical_lang/dump_graph && dot -Tpng Diff_dump_%d.dot -o try_try_%d.png && \
         open try_try_%d.png", number_of_zapusk, number_of_zapusk, number_of_zapusk);
     
     system(apple_script);

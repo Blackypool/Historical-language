@@ -1,5 +1,4 @@
-#include "str_of_str.h"
-#include "enumchik_s.h"
+#include "../enumchik_s.h"
 #include "switch_func.h"
 
 int* read_er(int *lines);

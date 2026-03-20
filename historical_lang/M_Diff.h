@@ -1,6 +1,12 @@
 #ifndef MAIN_MATH_DIF_H
 #define MAIN_MATH_DIF_H
 
+//_________FOR FUST USE______
+#define BASA_HISTORY "history.rim"  //база событий с данными
+#define STYLE_FILE   "style.rim"    //перезаписываем оригинал в нужном стиле
+#define MY_language  "z_test_programs/test.rim"     //откуда читаем
+//___________________________
+
 typedef double typ_of_x;
 
 #define ar_get struct A_S_T* ast

@@ -168,7 +168,10 @@ void its_number_time(char* text_rim, size_t* now, struct leaf* toke_nize, int* p
         }
 
         if(sch == num_struct - 2)//потом сделаю базу данных с датами
-            call_nyrosetochka(ans_que, toke_nize, pose_tz);
+        {
+            fprintf(stderr, "\nhere need nyro to scan date^ but no))\n\n");
+           // call_nyrosetochka(ans_que, toke_nize, pose_tz);
+        }
     }
 
     free(ans_que);
