@@ -5,7 +5,7 @@
         Asm_expression(fp, leaf->right, ast);
 
 #define Debug \
-        fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
+        // fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
 
 
 
@@ -578,7 +578,7 @@ int where_you_from(ar_get, char* name_var, int* is_global)          // just chec
         {
             *is_global = reserve_stk[i].est_net;
             stack_push(&ast->var_ble_tabl, reserve_stk);
-            fprintf(stderr, "\nparam <%s> is found\n", name_var);
+            // fprintf(stderr, "\nparam <%s> is found\n", name_var);
             return reserve_stk[i].adress;
         }
     }

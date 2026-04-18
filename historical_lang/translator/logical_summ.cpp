@@ -5,7 +5,7 @@
         Asm_expression(fp, leaf->right, ast);
 
 #define Debug \
-        fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
+        // fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
 
 
 static struct znaki translit[] = {

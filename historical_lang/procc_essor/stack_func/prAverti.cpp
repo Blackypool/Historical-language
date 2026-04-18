@@ -75,18 +75,18 @@ void def_size_capacity(struct stk* data, int /*num_line*/, const char* /*file_n*
 
     if((data->size) >= (data->capacity))
     {
-        printf("size >= capacity(((");
+        printf("size >= capacity((( realok use, all right\n");
         while((data->size) >= def_capacity)
             def_capacity = def_capacity * 2;
 
-        tip_lac* def_stack = (tip_lac*) realloc(data->stack, (unsigned long)def_capacity * sizeof(tip_lac) + 2);
+        tip_lac* def_stack = (tip_lac*) realloc(data->stack, ((unsigned long)def_capacity + 2) * sizeof(tip_lac));
         
         data->stack = def_stack;
 
         //data->stack[data->capacity + 1] = POISON;
 
         data->capacity = def_capacity;
-        data->stack[data->capacity + 1] = 419;
+        data->stack[data->capacity + 1] = 7557;
     }
 }
 

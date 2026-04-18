@@ -100,7 +100,10 @@ Le_af Get_P(ar_get)
     }
         
     if(CUR_ent.type == USER_OPER)
-        return Get_F_user(ast);
+    {
+        Le_af call_node = Get_Call(ast);
+        return call_node;
+    }
 
     if(CUR_ent.type == VARIA)
     {
@@ -729,7 +732,7 @@ Le_af Get_param_in_gde_to(ar_get)
     Le_af ravno = &CUR_ent;
     (ast->pose)++;
 
-    Le_af value = Get_solo_string(ast);
+    Le_af value = Get_logical_OR(ast);
 
     ravno->left = var;
     ravno->right = value;
@@ -771,8 +774,6 @@ Le_af Get_ret(ar_get)
     (ast->pose)++;
 
     tchka_zap->left = reter;
-
-    stack_pop(&ast->var_ble_tabl);
 
     return tchka_zap;
 }

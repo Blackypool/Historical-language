@@ -223,8 +223,8 @@ enum ALL_OPer {
             }
 
 #define  DE_Bug \
-    char* de_bug = what_need_printf(ast->tok_mas, ast->pose); \
-    fprintf(stderr, "========FUNC_%s=======\nnow = [%d]    type_token = {%zu}   value = '%s'\n\n", __func__, ast->pose, CUR_ent.type, de_bug); \
+    // char* de_bug = what_need_printf(ast->tok_mas, ast->pose); \
+    // fprintf(stderr, "========FUNC_%s=======\nnow = [%d]    type_token = {%zu}   value = '%s'\n\n", __func__, ast->pose, CUR_ent.type, de_bug); \
 
 
     ///проверка области видимости

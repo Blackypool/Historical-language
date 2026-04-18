@@ -115,7 +115,7 @@ struct A_S_T* lex_ana(char* name_of_compile_file)
     for(int i = 0; i < ast->max_pose; ++i)
     {
         //if(toke_nize[i].type == OPERAT)
-            fprintf(stderr, "________token________[%d] = -%s-\n\n", i, what_need_printf(toke_nize, i));//toke_nize[i].value.oper);//
+            // fprintf(stderr, "________token________[%d] = -%s-\n\n", i, what_need_printf(toke_nize, i));//toke_nize[i].value.oper);//
     }
     return ast;
 }

@@ -18,22 +18,7 @@ int main(int argc, char* argv[])
 
     return 0;
 }
-    // компилятор       запуск скрипта.        название комипилированного.   название конечного
-//   g++ compile.cpp && ./a.out z_test_programs/factorial.rim facto_rial
+    // компилятор       запуск скрипта.        название комипилированного.   название конечного/ то что указывается в конце файла
+//   g++ compile.cpp && ./a.out z_test_programs/factorial.rim facto_rial    -- запуск факторила
 //                  name of file                text in the end of file.rim
-//   
-
-
-// int fact_func(int num)
-// {
-//     if(num > 1)
-//     {
-//         num = fact_func(num - 1) * num;
-//         return num;
-//     }
-
-//     if(num < 0)
-//         return -1;
-
-//     return 1;
-// }
+//   g++ compile.cpp && ./a.out z_test_programs/prime_kvadr.rim prime_kvadr -- запуск квадратки

@@ -5,7 +5,7 @@
         Asm_expression(fp, leaf->right, ast);
 
 #define Debug \
-        fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
+        // fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
 
         
 void Asm_if_cmd(FILE* fp, Le_af leaf, ar_get)

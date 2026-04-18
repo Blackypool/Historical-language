@@ -55,7 +55,7 @@ typedef int ans_typ;
         }
 
 
-#define DEBUG printf("hranilische[%d] = {%d} = (%s)[%d}\n", sche, hranilische[sche], str_str[lin], lin)
+#define DEBUG // printf("hranilische[%d] = {%d} = (%s)[%d}\n", sche, hranilische[sche], str_str[lin], lin)
             
 
 #define ST_PP(data)\

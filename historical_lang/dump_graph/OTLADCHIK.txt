@@ -1,1 +1,2 @@
+stack[1] = two
 stack[0] = two
