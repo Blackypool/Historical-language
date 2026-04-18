@@ -1,7 +1,7 @@
 #include "../enumchik_s.h"
 #include "switch_func.h"
 
-int* read_er(int *lines);
+int* read_er(int *lines, char* name_of_compile_file);
 
 // void memory_crafter(SPU* spu);
 
@@ -9,12 +9,15 @@ int resume_calc(TO_MUSH_ARG);
 
 void lego_spu(struct SPU* spu);
 
-int main()
+int main(int argc, char* argv[])
 {
     struct SPU spu = {};    //конструктор процессора //Dump
     int lines = 0;
 
-    int* str_str = read_er(&lines);
+    char name_compile[120] = {};
+    snprintf(name_compile, sizeof(name_compile), "../z_asm_for_start/%s.bin", argv[1]);
+
+    int* str_str = read_er(&lines, name_compile);
     ASSERTICHE(str_str, 0);
 
     //  for(int i = 0; i < lines; ++i)
@@ -63,17 +66,17 @@ void lego_spu(struct SPU* spu)
 //     spu->ram = Ram;
 // }
 
-int* read_er(int *lines)
+int* read_er(int *lines, char* name_of_compile_file)
 {   
     struct stat file_info = {};
 
-    if (stat(FILE_for_SPU, &file_info) != 0)
+    if (stat(name_of_compile_file, &file_info) != 0)
     {
         perror("stat error");
         return NULL;
     }
 
-    FILE *fp = fopen(FILE_for_SPU, "rb");
+    FILE *fp = fopen(name_of_compile_file, "rb");
     ASSERTICHE(fp, NULL);
 
     size_t file_buf = (size_t)file_info.st_size;

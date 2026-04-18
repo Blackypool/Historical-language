@@ -10,7 +10,7 @@ void change_architectura(struct leaf* toke_nize, int pose_tz);
 
 char* what_need_printf(leaf* toke_nize, int pose);
 
-void Destroy_Rimeni(struct leaf* toke_nize, int pose_tz);
+void Destroy_Rimeni(struct leaf* toke_nize, int pose_tz, char* name_of_compile_file);
 
 void piramyd_style(PR_AR);
 void rim_style(PR_AR);

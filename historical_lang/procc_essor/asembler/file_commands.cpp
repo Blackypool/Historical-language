@@ -1,10 +1,10 @@
 #include "file_commands.h"
 
-void glue_of_functio(size_t& count_operation, int& lines_num, struct ASM* a_s_m)
+void glue_of_functio(size_t& count_operation, int& lines_num, struct ASM* a_s_m, char* name_of_comp_file)
 {
-    size_t number_char_in_file = number_of_file();
+    size_t number_char_in_file = number_of_file(name_of_comp_file);
 
-    char *full_asm = file_pointer_read();
+    char *full_asm = file_pointer_read(name_of_comp_file);
     ASSERTICHE(full_asm, perror("bad glue full asm"));
     
     lines_num = number_of_lens(full_asm);
@@ -16,11 +16,11 @@ void glue_of_functio(size_t& count_operation, int& lines_num, struct ASM* a_s_m)
     a_s_m->fuull_asm = full_asm;
 }
 
-size_t number_of_file()
+size_t number_of_file(char* name_of_comp_file)
 {
     struct stat file_info = {};
 
-    if (stat(FILE_for_ASM, &file_info) != 0)
+    if (stat(name_of_comp_file, &file_info) != 0)
     {
         perror("stat error");
         return 1;
@@ -29,11 +29,11 @@ size_t number_of_file()
     return (size_t)file_info.st_size;
 }
 
-char* file_pointer_read()
+char* file_pointer_read(char* name_of_comp_file)
 {
-    size_t number_char = number_of_file();
+    size_t number_char = number_of_file(name_of_comp_file);
 
-    FILE *fp = fopen(FILE_for_ASM, "rb");
+    FILE *fp = fopen(name_of_comp_file, "rb");
     ASSERTICHE(fp, NULL);
 
     char *ptr = (char*) calloc((size_t)(number_char + 2), sizeof(char));

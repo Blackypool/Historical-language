@@ -44,7 +44,7 @@ int* what_the_operation(char** str_str, int lines, int *black_metka)
 
     ASSERTICHE(str_str, NULL);
 
-    int *hranilische = (int*) calloc((size_t)(lines) * 2, sizeof(int));
+    int *hranilische = (int*) calloc((size_t)(lines) * 4, sizeof(int));
     ASSERTICHE(hranilische, NULL);
 
     int Kana = 7;

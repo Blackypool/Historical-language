@@ -1,28 +1,26 @@
 #include "read_tree.h"
-//в лексическом анализе надо сразу указывать испольщуется функция или инициалиируется
-//то есть func->fact->param -- init
-// fact->param -- in use
 
-//в функции хранить указатель на переменные?!?!??!?
-
-//PUSHREG DX FOR FUNC
 #define PR_ASM \
         Asm_expression(fp, leaf->left, ast); \
         Asm_expression(fp, leaf->right, ast);
 
 #define Debug \
-        // fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
+        fprintf(stderr, "\n====FUNC_%s====  type = -%zu-\n\n", __func__, leaf->type);
 
 
-static struct znaki translit[] = {
 
-    {"ADD\n", ADD_C},
-    {"POW\n", POW_C},
-    {"DIV\n", DIV_C},
-    {"MUL\n", MUL_C},
-    {"SUB\n", SUB_C},
+// AX   = ret of func
+// BX   = ptr to prev memory location (for supp rek)
+// CX   = can use anywhere
+// DX   = ptr to memory
+// EX   = need to достать из памяти како-нибудь параметр
 
-};
+// also can use anywherre:
+// FX
+// GX
+// HX
+// IX
+// GX
 
 
 int asm_main(FILE* fp, Le_af root, ar_get)
@@ -30,39 +28,14 @@ int asm_main(FILE* fp, Le_af root, ar_get)
     ast->Adress_next = 0;
     ast->func_num = 0;
 
+    fprintf(fp, "PUSH 0\n");
+    fprintf(fp, "POPREG DX\n");
+
     Asm_expression(fp, root, ast);
 
     fprintf(fp, "HLT");
 
     return 1;
-}
-
-
-int asm_post_or(Le_af leaf)
-{
-    Debug;
-
-    for(int i = 0; i < (int)(sizeof(translit) / sizeof(translit[0])); ++i)
-        if(leaf->value.oper == (size_t)translit[i].e_num)
-            return i;
-
-    return -1;
-}
-
-
-void operat_ptinting(FILE* fp, Le_af leaf, ar_get)
-{
-    Debug;
-
-    int i = asm_post_or(leaf);
-    if(i != -1)
-    {
-        PR_ASM; //требующие постордер функции
-        fprintf(fp, "%s", translit[i].value);
-        return ;
-    }
-
-    Asm_another(fp, leaf, ast); //остальные оперции
 }
 
 
@@ -85,7 +58,7 @@ void Asm_another(FILE* fp, Le_af leaf, ar_get)
                     PR_ASM;
                 break;
 
-                case USER_OPER:
+                case USER_OPER:     
                     user_oper_init(fp, leaf, ast); //инициализация функции пользователя
                 break;
 
@@ -94,10 +67,8 @@ void Asm_another(FILE* fp, Le_af leaf, ar_get)
                 break;
 
                 case RET_C:
-                    Asm_expression(fp, leaf->left, ast);
-                    fprintf(fp, "POPREG DX\n");
-                    fprintf(fp, "RET\n");
-                    stack_pop(&ast->var_ble_tabl);
+                    Asm_expression(fp, leaf->left, ast);        // чтобы можно было возвращать выражения
+                    Asm_ret_for_rek_supp(fp);
                 break;
 
                 case WHILE_C:
@@ -105,7 +76,7 @@ void Asm_another(FILE* fp, Le_af leaf, ar_get)
                 break;
 
                 case ELSE_C:
-                    fprintf(stderr, "\nOKAK else without if_eckiy?!\n\n");
+                    fprintf(stderr, "\nOKAK, else without if?!\n\n");
                 break;
 
                 case IN_IT:
@@ -136,8 +107,7 @@ void Asm_another(FILE* fp, Le_af leaf, ar_get)
 
                 case SCAN_C:
                     fprintf(fp, "INT\n");
-                    fprintf(fp, "PUSHREG BX\n");
-                    fprintf(fp, "POPREG BX\n");
+                break;
 
                 case EQUAL_C:
                 case L_E_bigger:
@@ -162,6 +132,11 @@ void user_oper_init(Arg_s)
 {
     Debug;
     (ast->func_num)++;
+
+    int main_offset_addr = 0;
+    main_offset_addr = ast->Adress_next;
+    ast->Adress_next = 0;   //offset for params
+
     //leaf == func == operat
     //leaf->left == name of func
     //leaf->right == connect
@@ -211,18 +186,86 @@ void user_oper_init(Arg_s)
 
     // func
     fprintf(fp, "JMP :%d\n", end_of_func);  //init перепрыгиваем внутри основного кода 
-    fprintf(fp, ":%d\n", start_of_func); //lable    //сюда будет колл
+    fprintf(fp, ":%d\n", start_of_func);    //lable    //сюда будет колл
 
     // (
     func_open_space(connect, ast, i, func_id);   //парамс чек+ инит адреса
     // )
 
-    // {
-    Asm_expression(fp, body, ast);      //body
-    fprintf(fp, "JMP :%d\n", end_of_func); //в конец     уже есть ретерн 
+//     // {    support rekursia
+//     fprintf(fp, "PUSHREG BX\n");       // ; mov [dx], bx
+//     fprintf(fp, "POPM [DX]\n");
+
+//     fprintf(fp, "PUSHREG DX\n");       // ; mov bx, dx     
+//     fprintf(fp, "POPREG BX\n");
+//     // }
+    
+// //////////////////////////////////////save regs -->
+    fprintf(fp, "PUSHREG HX\n");
+
+    fprintf(fp, "PUSHREG CX\n");
+// //////////////////////////////////////
+
+    //[
+    Asm_expression(fp, body, ast);  //body (ret in here)
+    //]
+    
+    // {    skip metka
+    fprintf(fp, "JMP :%d\n", end_of_func); //в конец
     // }
 
     fprintf(fp, ":%d\n", end_of_func);
+
+    stack_pop(&ast->var_ble_tabl);              //after ret go out see zone          
+
+// description to how work rekurs support -->
+    // ; самый первый вызов (нужна глубина рекурсии флаг что мы и так в функции тогда другая конструкция)
+    // mov bx, dx              ; сохраняем указатель на текущую область памяти
+    // add dx, 100             ; выделяем новую память под call
+    //
+    // call func               ; при вызове все регистры сохраняются 
+    // {
+    // mov [dx], bx        ; в новой памяти в первой ячейке лежит адрес начала старой памяти
+    // mov bx, dx          ; указывает на место где лежит указатель на предыдущюю область памяти в новой памяти 
+    //
+    // (mov dx, bx         ; сбрасываем накопленный dx до налчала вызова функции
+    //  add dx, 100        ; выделяем новую область памяти
+    //  call func
+    //  {
+    //  mov [dx], bx       ; сохраняем указатель на предыдущую область
+    //  mov bx, dx         ; сохраняем указатель в новой области на указатель на старую область памяти
+    //
+    //  spam
+    //
+    //  mov dx, [bx]
+    //  mov bx, dx
+    //  } )
+    //
+    //
+    // mov dx, [bx]        ; переносим в dx указатель на предыдущую область памяти; в ячейку 
+    // mov bx, dx          ; bx указыает на указатеь на ячейку в которой хранится указатель на предпредыдущую область памяти в кооринатах предыдущейобдасти памяти
+    // }
+
+    ast->Adress_next = main_offset_addr;
+}
+
+
+void Asm_ret_for_rek_supp(FILE* fp)
+{
+    fprintf(fp, "POPREG AX\n");         // AX = ret
+
+////////////////////////////////////// retern regs
+    fprintf(fp, "POPREG CX\n");      
+
+    fprintf(fp, "POPREG HX\n");
+//////////////////////////////////////
+
+    // // {    support rekursia
+    // fprintf(fp, "PUSHM [BX]\n");     //    ; mov dx, [bx]
+    // fprintf(fp, "POPREG DX\n");
+    // // }
+
+    fprintf(fp, "RET\n");
 }
 
 
@@ -333,7 +376,7 @@ void Asm_init(Arg_s)
         
         (ast->Adress_next)++;
 
-        stack_push(&ast->var_ble_tabl, new_stk);
+        stack_push(&ast->var_ble_tabl, new_stk);    // size++ here deeper
     }
 
     free(name_var);
@@ -346,30 +389,38 @@ void Asm_ass_ignment(Arg_s)
 {
     Debug;
 
+    int is_global = 0;
     char* name = strdup(leaf->left->value.x);
-    int adr = where_you_from(ast, name);
+    int adr = where_you_from(ast, name, &is_global);
     if(adr < 0)
     {
         fprintf(stderr, "\nadr < 0) in Asm_ass_ignment(Arg_s) \n\n");
         return ;
     }
 
-    Asm_expression(fp, leaf->right, ast); //in steck val of var
+    Asm_expression(fp, leaf->right, ast); //in stack val of var
 
     fprintf(fp, "PUSH %d\n", adr);
-    fprintf(fp, "POPREG AX\n");
-    fprintf(fp, "POPM [AX]\n");
+    
+    if(is_global == LOCAL)
+    {
+        fprintf(fp, "PUSHREG DX\n");
+        fprintf(fp, "ADD\n");
+    }
+
+    fprintf(fp, "POPREG EX\n");
+    fprintf(fp, "POPM [EX]\n");
 
     free(name);
 }
 
 
-void Asm_expression(Arg_s)
+void Asm_expression(Arg_s)          // types
 {
     if(leaf == NULL)
         return ;
 
-    if(leaf->type == Z_NAK && leaf->value.oper == ZAPYTAYA)
+    if(leaf->type == Z_NAK && leaf->value.oper == ZAPYTAYA)   
         return ;
     
 
@@ -408,17 +459,25 @@ void var_printing(FILE* fp, Le_af leaf, ar_get)
 {
     Debug;
 
+    int is_global = 0;
     char* name = strdup(leaf->value.x);
-    int adr = where_you_from(ast, name);
+    int adr = where_you_from(ast, name, &is_global);
     if(adr < 0)
     {
-        fprintf(stderr, "\nadr < 0) in Asm_ass_ignment(Arg_s) \n\n");
+        fprintf(stderr, "\nadr < 0) in Asm_ass_ignment(Arg_s) parama netu\n\n");
         return ;
     }
 
     fprintf(fp, "PUSH %d\n", adr);
-    fprintf(fp, "POPREG AX\n");
-    fprintf(fp, "PUSHM [AX]\n");
+
+    if(is_global == LOCAL)
+    {
+        fprintf(fp, "PUSHREG DX\n");
+        fprintf(fp, "ADD\n");
+    }
+    
+    fprintf(fp, "POPREG EX\n");
+    fprintf(fp, "PUSHM [EX]\n");            // param is also in stack 
 
     free(name);
 }
@@ -443,9 +502,28 @@ void func_user_ptinting(FILE* fp, Le_af leaf, ar_get)
     Asm_get_args_(fp, leaf->left, ast, num_in_f, params, &i);
 
 
+    // if(deep_of_func > 0) // =>> рекурсивный вызов
+    // {
+    //     fprintf(fp, "PUSHREG BX\n");   // mov dx, bx             ; сбрасываем накопленный dx до налчала вызова функции
+    //     fprintf(fp, "POPREG DX\n");
+    // }
+    // else
+    // {
+    //     fprintf(fp, "PUSHREG DX\n");   //mov bx, dx              ; сохраняем указатель на текущую область памяти main
+    //     fprintf(fp, "POPREG BX\n");
+    // }
+    fprintf(fp, "PUSHREG DX\n");    // save dx
+
+    fprintf(fp, "PUSHREG DX\
+               \nPUSH %d\
+               \nADD\
+               \nPOPREG DX\n", COUNT_OF_MEM_FOR_FUNC);          // DX = DX + const=25 (how much memory need for func higher)
+
     fprintf(fp, "CALL :%d\n", ast->userz_func[func_id].adress );
 
-    fprintf(fp, "PUSHREG DX\n"); //return is popreg == all good
+    fprintf(fp, "POPREG DX\n");     // renessans dx
+
+    fprintf(fp, "PUSHREG AX\n");    // push param in stack
 }
 
 
@@ -456,11 +534,12 @@ void Asm_get_args_(FILE* fp, Le_af leaf, ar_get, int num_in_f, table_name* param
     if(leaf == NULL || *i == num_in_f)
         return ;
 
-    if(leaf->type == Z_NAK && leaf->value.oper == ZAPYTAYA)
+    if(leaf->type == OPERAT && leaf->value.oper == ZAPYTAYA)
     {
-        Asm_get_left_args_(fp, leaf->left, ast, params, *i);
-        (*i)++;
+        // Asm_get_left_args_(fp, leaf->left, ast, params, *i);
+        // (*i)++;
 
+        Asm_get_args_(fp, leaf->left, ast, num_in_f, params, i);
         Asm_get_args_(fp, leaf->right, ast, num_in_f, params, i);
     }
 
@@ -479,214 +558,33 @@ void Asm_get_left_args_(FILE* fp, Le_af leaf, ar_get, table_name* params, int i)
     Asm_expression(fp, leaf, ast);
 
     fprintf(fp, "PUSH %d\n", params[i].adress);
-    fprintf(fp, "POPREG AX\n");
-    fprintf(fp, "POPM [AX]\n");
+    fprintf(fp, "PUSH %d\n", COUNT_OF_MEM_FOR_FUNC);
+    fprintf(fp, "ADD\n");
+
+    fprintf(fp, "PUSHREG DX\n");
+    fprintf(fp, "ADD\n");
+
+    fprintf(fp, "POPREG EX\n");
+    fprintf(fp, "POPM [EX]\n");
 }
 
 
-void Asm_if_cmd(FILE* fp, Le_af leaf, ar_get)
-{
-    Debug;
-
-    (ast->func_num)++;
-
-    int end_if = (ast->func_num);
-    (ast->func_num)++;
-
-    int start_else = (ast->func_num);
-    (ast->func_num)++;
-
-    Asm_expression(fp, leaf->left, ast); //resultat usloviya ifa
-
-    if(leaf->right->type == OPERAT && leaf->right->value.oper == ELSE_C)
-    {
-        // if(
-        fprintf(fp, "PUSH 0\n"); //compare with zero
-        fprintf(fp, "JE :%d\n", start_else); //if == 0 ->> else jump to else
-        // )
-        
-        // {
-        Asm_expression(fp, leaf->right->left, ast);
-        fprintf(fp, "JMP :%d\n", end_if);
-        // }
-
-        //else
-        // {
-        fprintf(fp, ":%d\n", start_else);
-        Asm_expression(fp, leaf->right->right, ast);
-        fprintf(fp, "JMP :%d\n", end_if);
-        // }
-    }
-
-    else  //without else
-    {
-        // if(
-        fprintf(fp, "PUSH 0\n"); //compare with zero
-        fprintf(fp, "JE :%d\n", end_if); //if == 0 ->> jump to endif
-        // )
-
-
-        // {
-        Asm_expression(fp, leaf->right, ast);
-        fprintf(fp, "JMP :%d\n", end_if);
-        // }
-    }
-
-    fprintf(fp, ":%d\n", end_if);
-}
-
-
-void Asm_while_cmd(FILE* fp, Le_af leaf, ar_get)
-{
-    Debug;
-
-    (ast->func_num)++;
-
-    int sam_while = (ast->func_num);
-    (ast->func_num)++;
-
-    int end_while = (ast->func_num);
-    (ast->func_num)++;
-
-    fprintf(fp, "JMP :%d\n", sam_while);
-    fprintf(fp, ":%d\n", sam_while);
-
-    // while(
-    Asm_expression(fp, leaf->left, ast); //resultat usloviya ifa
-    fprintf(fp, "PUSH 0\n"); //compare with zero
-    fprintf(fp, "JE :%d\n", end_while); //if == 0 ->> jump out
-    // )
-
-    // {
-    Asm_expression(fp, leaf->right, ast);
-    fprintf(fp, "JMP :%d\n", sam_while);
-    // }
-
-    fprintf(fp, "JMP :%d\n", end_while);
-    fprintf(fp, ":%d\n", end_while);
-}
-
-
-void Asm_logical_or(FILE* fp, Le_af leaf, ar_get)// переписать бы
-{
-    Debug;
-
-    (ast->func_num)++;
-
-    int true_labl = (ast->func_num);
-    (ast->func_num)++;
-
-    int end_lbl = (ast->func_num);
-    (ast->func_num)++;
-
-    Asm_expression(fp, leaf->left, ast);  //in steck left param 
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JNE :%d\n", true_labl);
-
-
-    Asm_expression(fp, leaf->right, ast); //right
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JNE :%d\n", true_labl);
-
-
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JMP :%d\n", end_lbl);
-
-
-    fprintf(fp, ":%d\n", true_labl);
-    fprintf(fp, "PUSH 1\n");
-    fprintf(fp, "JMP :%d\n", end_lbl);
-
-    fprintf(fp, ":%d\n", end_lbl);
-}
-
-
-void Asm_logical_and(FILE* fp, Le_af leaf, ar_get)
-{
-    Debug;
-
-    (ast->func_num)++;
-
-    int false_label = (ast->func_num);
-    (ast->func_num)++;
-
-    int end_label = (ast->func_num);
-    (ast->func_num)++;
-
-    Asm_expression(fp, leaf->left, ast);  //in steck left param 
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JE :%d\n", false_label);
-
-    Asm_expression(fp, leaf->right, ast); //right
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JE :%d\n", false_label);
-
-    fprintf(fp, "PUSH 1\n");
-    fprintf(fp, "JMP :%d\n", end_label);
-
-    fprintf(fp, ":%d\n", false_label);
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JMP :%d\n", end_label);
-
-    fprintf(fp, ":%d\n", end_label);
-}
-
-
-static struct znaki jumpers[] = {
-
-    {"JE ", EQUAL_C},
-
-    {"JAE ", L_E_bigger},
-    {"JA ", L_bigger_R},
-
-    {"JBE ", L_E_smaller},
-    {"JB ", L_smaller_R},
-    
-    {"JNE ", N_EQUAL_C},
-
-};
-
-void bear_gammy_jump_func(FILE* fp, Le_af leaf, ar_get)
-{            
-    Asm_expression(fp, leaf->left,  ast); ///////////////////////////////
-    Asm_expression(fp, leaf->right, ast);
-
-    (ast->func_num)++;
-    int end_of_JJ = (ast->func_num);
-
-    (ast->func_num)++;
-
-    int true_usl = (ast->func_num);
-    (ast->func_num)++;
-
-    for(int i = 0; i < (int)(sizeof(jumpers) / sizeof(jumpers[0])); ++i)
-        if(leaf->value.oper == (size_t)jumpers[i].e_num)
-            fprintf(fp, "%s:%d\n", jumpers[i].value, true_usl);
-
-
-    fprintf(fp, "PUSH 0\n");
-    fprintf(fp, "JMP :%d\n", end_of_JJ);
-    
-    fprintf(fp, ":%d\n", true_usl);
-    fprintf(fp, "PUSH 1\n");
-    fprintf(fp, "JMP :%d\n", end_of_JJ);
-
-    fprintf(fp, ":%d\n", end_of_JJ);
-}
-
-
-int where_you_from(ar_get, char* name_var)
+int where_you_from(ar_get, char* name_var, int* is_global)          // just check stack for param // return address where live param
 {
     table_name* reserve_stk = stack_pop(&ast->var_ble_tabl);
     for(int i = 0; i < ast->max_num && reserve_stk[i].name != NULL; ++i)
     {
         if(strcmp(name_var, reserve_stk[i].name) == 0)
         {
+            *is_global = reserve_stk[i].est_net;
             stack_push(&ast->var_ble_tabl, reserve_stk);
+            fprintf(stderr, "\nparam <%s> is found\n", name_var);
             return reserve_stk[i].adress;
         }
     }
+    fprintf(stderr, "\nparam <%s> NOT FOUND\n", name_var);
     stack_push(&ast->var_ble_tabl, reserve_stk);
+
     return -1;
 }
 

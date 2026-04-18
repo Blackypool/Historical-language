@@ -188,11 +188,11 @@ void for_functions(ARG_FFC)
             {
                 (*line)++;
                 int line_kuda_tp = str_str[*line] - 1;
-                printf("\n\n\nline_kuda_tp = %d\n\n\n", line_kuda_tp);
+                // printf("\n\n\nline_kuda_tp = %d\n\n\n", line_kuda_tp);
                 
                 int kuda_obratno = *line + 1;
 
-                printf("\n\n\nkuda_obratno = %d\n\n\n", kuda_obratno);
+                // printf("\n\n\nkuda_obratno = %d\n\n\n", kuda_obratno);
                 stack_push(stk_ret, kuda_obratno);
 
                 *line = line_kuda_tp;

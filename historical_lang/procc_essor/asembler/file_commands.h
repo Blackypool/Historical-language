@@ -3,11 +3,11 @@
 
 #include "str_of_str.h"
 
-void glue_of_functio(size_t& count_operation, int& lines_num, struct ASM* a_s_m);
+void glue_of_functio(size_t& count_operation, int& lines_num, struct ASM* a_s_m, char* name_of_comp_file);
 
-char* file_pointer_read();
+char* file_pointer_read(char* name_of_comp_file);
 
-size_t number_of_file();
+size_t number_of_file(char* name_of_comp_file);
 
 int number_of_lens(char* ptr);
 

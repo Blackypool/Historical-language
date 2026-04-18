@@ -2,9 +2,9 @@
 #define MAIN_MATH_DIF_H
 
 //_________FOR FUST USE______
-#define BASA_HISTORY "history.rim"  //база событий с данными
-#define STYLE_FILE   "style.rim"    //перезаписываем оригинал в нужном стиле
-#define MY_language  "z_test_programs/test.rim"     //откуда читаем
+#define BASA_HISTORY "token_iz/history.rim"                  //база событий с данными
+#define STYLE_FILE   "style.rim"                    //перезаписываем оригинал в нужном стиле
+//откуда читаем = argc/argv == ./a.out z_test_programs/prime_kvadr.rim
 //___________________________
 
 typedef double typ_of_x;
@@ -19,6 +19,8 @@ typedef double typ_of_x;
 
 #define GLOBAL 1
 #define LOCAL  0
+
+#define COUNT_OF_MEM_FOR_FUNC 150
 
 #include <stdio.h>
 #include <string.h>
@@ -252,6 +254,8 @@ enum ALL_OPer {
 
 //translyator
 #include "translator/read_tree.h"
+#include "translator/logical_summ.h"
+#include "translator/compare_s_func.h"
 
 
 #endif

@@ -9,9 +9,6 @@ enum for_user
     NUM_label_ss = 200,
 };
 
-#define FILE_for_SPU "asm_into_bin.bin"
-#define FILE_for_ASM "../z_asm_for_start/lang.asm"
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -39,7 +36,7 @@ typedef int ans_typ;
 
 #define ASSCANFOR_ASM(ret, lin)  \
         if((ret) < 0) { \
-            fprintf(stderr, "\nsscanf ruined in %s:%d, error in %s:%d\n", __FILE__, __LINE__, FILE_for_ASM, lin + 1); \
+            fprintf(stderr, "\nsscanf ruined in %s:%d, error in %s:%d\n", __FILE__, __LINE__, "FILE_for_ASM", lin + 1); \
             return  NULL; \
         }
 

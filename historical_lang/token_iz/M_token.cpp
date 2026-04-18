@@ -1,6 +1,6 @@
 #include "../M_Diff.h"
 
-struct A_S_T* lex_ana()
+struct A_S_T* lex_ana(char* name_of_compile_file)
 {
     //////////////  заполняем базу исторических событий
     int err = history_base_upgrad();
@@ -9,7 +9,7 @@ struct A_S_T* lex_ana()
 
     //////////////  читаем файл
     size_t number_char = 0;
-    char* text_rim = file_pointer_read(&number_char, MY_language);   //весь код целиком
+    char* text_rim = file_pointer_read(&number_char, name_of_compile_file);   //весь код целиком
     // for(size_t i = 0; i < number_char; ++i)
     //     fprintf(stderr, "Позиция %zu: символ '%c'\n", i, text_rim[i]);
         
@@ -28,7 +28,7 @@ struct A_S_T* lex_ana()
     {
         // fprintf(stderr, "Позиция %zu: символ '%c'\n", i, text_rim[i]);
         skip_spasec(text_rim, &i);
-        // skip_comments(text_rim, &i);
+        skip_comments(text_rim, &i);
 
         if(i >= number_char)
             break;
@@ -183,7 +183,6 @@ char* create_word(char* text_rim, size_t* now, const char type_word)
         ans_que[i] = text_rim[start + i];
 
     ans_que[len] = '\0';
-
 
     // if(text_rim[*now] == type_word) 
     //     (*now)++;

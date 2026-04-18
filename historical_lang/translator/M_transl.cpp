@@ -1,8 +1,5 @@
 #include "../M_Diff.h"
 
-#define TREE_ASM "lang.asm"
-#define TREE_TXT "tree.txt"
-
 int pre_order_print(Le_af root, ar_get);
 
 void dump_tree(FILE* fp, Le_af leaf);
@@ -12,19 +9,25 @@ const char* what__printf(Le_af leaf);
 void update_ast(A_S_T* ast);
 
 
-int main()
+int main(int argc, char* argv[])
 {
-    char* tree_txt = file__read(TREE_TXT);  //прочитали файл
+    char name_of_skompilenni[120] = {};
+    snprintf(name_of_skompilenni, sizeof(name_of_skompilenni), "%s.txt", argv[1]);
+
+    char* tree_txt = file__read(name_of_skompilenni);  //прочитали файл
 
     Le_af root = create_base(&tree_txt);  //создали дерево по файлу
 
-    struct A_S_T ast = {.file_name = TREE_ASM};
+    char tree_asm_name[150] = {};
+    snprintf(tree_asm_name, sizeof(tree_asm_name), "../procc_essor/z_asm_for_start/%s.asm", argv[1]);
+
+    struct A_S_T ast = {.file_name = tree_asm_name};
     // int err = pre_order_print(root, &ast);
     // AsserT(err < 0, -1);
     update_ast(&ast);
 
     /////////////////
-    FILE* fp = fopen(TREE_ASM, "w");
+    FILE* fp = fopen(tree_asm_name, "w");
     AsserT(fp == NULL, -1);
 
     int err = asm_main(fp, root, &ast);

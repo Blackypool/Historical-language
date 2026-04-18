@@ -4,17 +4,17 @@
             fclose(fp); \
             return ;
 
-void Destroy_Rimeni(struct leaf* toke_nize, int pose_tz)
+void Destroy_Rimeni(struct leaf* toke_nize, int pose_tz, char* name_of_compile_file)
 {
     srand((unsigned int)time(NULL));
 
     /////////////
     char appl_script[512] = {0};
-    snprintf(appl_script, sizeof(appl_script), "cp %s ~/Documents/Renaissance.rim", MY_language);
+    snprintf(appl_script, sizeof(appl_script), "cp %s ~/Documents/Renaissance.rim", name_of_compile_file);
     system(appl_script);
     /////////////
 
-    FILE* fp = fopen(MY_language, "w");
+    FILE* fp = fopen(name_of_compile_file, "w");
     AsserT(fp == NULL, );
     
     for(int i = 0; i < pose_tz * 4; ++i)

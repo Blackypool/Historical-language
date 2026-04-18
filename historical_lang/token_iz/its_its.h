@@ -3,7 +3,7 @@
 
 #include "../M_Diff.h"
 
-struct A_S_T* lex_ana();
+struct A_S_T* lex_ana(char* name_of_compile_file);
 
 int func_defolt_or_user(struct leaf* toke_nize, int* pose_tz, size_t* now, char* ans_que);
 

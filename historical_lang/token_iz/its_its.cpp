@@ -195,8 +195,8 @@ void its_over(ARG_s, char* text_rim)
     // (*now)++;
     char* an_ue = create_word(text_rim, now, '\0');
 
-    char new_file_name[40] = {0}; 
-    snprintf(new_file_name, strlen(an_ue) + 7, "%s.txt", an_ue);
+    char new_file_name[69] = {0}; 
+    snprintf(new_file_name, strlen(an_ue) + 50, "translator/%s.txt", an_ue);
 
     toke_nize[*pose_tz].lines_in_Rim = *now;
     toke_nize[*pose_tz].type = VARIA;

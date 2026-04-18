@@ -2,9 +2,11 @@
 
 void AST_cleaner(ar_get);
 
-int main()
+int main(int argc, char *argv[])
 {
-    struct A_S_T* ast = lex_ana();
+    char* name_of_compile_file = argv[1];
+
+    struct A_S_T* ast = lex_ana(name_of_compile_file);
     AsserT(ast == NULL, -1);
 
     lego_stack(&ast->var_ble_tabl, ast->max_num);

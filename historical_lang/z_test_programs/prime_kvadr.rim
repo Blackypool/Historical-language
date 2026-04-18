@@ -1,0 +1,73 @@
+init two = $global_dump$;
+init zero = $birthday_Jesus$;
+
+Dis_cr_func ( a b c )
+{
+   init D = b templar_meal b indulgence two templar_meal two templar_meal a templar_meal c ;
+
+   flood D ;
+} 
+
+non ad rem! its comment brbr!
+
+init A = confession ; 
+init B = confession ;
+init C = confession ;
+
+
+Edictum ( A == zero )
+{
+   Edictum ( B == zero )
+   {
+      Edictum ( C == zero )
+      {
+         init infinity = two templar_meal two templar_meal two ;
+         dogma infinity ;
+      }
+
+      kazn
+      {
+         init Unluck = two indulgence two templar_meal two cure two lynch two ;
+         dogma Unluck ;
+      }
+   }
+
+   kazn
+   {
+      init X = ( two indulgence two templar_meal two cure two lynch two ) templar_meal C lynch B ;
+      dogma X ;
+   }
+}
+
+kazn
+{
+   init Discr = Dis_cr_func ( A , B , C ) ;
+
+   Edictum ( Discr < zero )
+   {
+      init unluck = two indulgence two templar_meal two cure two lynch two ;
+      dogma unluck ;
+   }
+
+   kazn
+   {
+      init discr = dragon_fire Discr ;
+      
+      Edictum ( Discr == zero )
+      {
+         init X1 = ( ( two indulgence two templar_meal two cure two lynch two ) templar_meal B cure discr ) lynch ( two templar_meal A ) ; 
+         dogma X1 ; 
+      }
+
+      kazn
+      {
+         init X1 = ( ( two indulgence two templar_meal two cure two lynch two ) templar_meal B cure discr ) lynch ( two templar_meal A ) ; 
+         dogma X1 ; 
+
+         init X2 = ( ( two indulgence two templar_meal two cure two lynch two ) templar_meal B indulgence discr ) lynch ( two templar_meal A ) ; 
+         dogma X2 ; 
+      }
+   }
+}
+
+remember: prime_kvadr
